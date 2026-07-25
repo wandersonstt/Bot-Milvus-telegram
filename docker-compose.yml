@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  # 1. O contêiner do seu Bot (NOC Monitor)
+  bot-milvus:
+    build: .
+    env_file:
+      - .env
+    ports:
+      - "5000:5000" # Mantém a porta aberta caso você queira testar localmente
+
+  # 2. O contêiner do Ngrok
+  ngrok:
+    image: ngrok/ngrok:latest
+    restart: unless-stopped
+    environment:
+      # O Docker Compose vai ler o token direto do seu arquivo .env
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN} 
+    command:
+      # Inicia um túnel HTTP apontando para o NOME do serviço do bot na porta 5000
+      - "http"
+      - "--domain=prowessed-multiperforated-oliver.ngrok-free.dev"
+      - "bot-milvus:5000" 
+    ports:
+      - "4040:4040" # Expõe o painel de controle local do Ngrok
+    depends_on:
+      - bot-milvus # Garante que o Ngrok só inicie depois que o bot estiver rodando

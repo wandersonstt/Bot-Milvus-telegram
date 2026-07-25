@@ -1,0 +1,6 @@
+flask
+flask-cors
+waitress
+requests
+urllib3
+pyTelegramBotAPI
